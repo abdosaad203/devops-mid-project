@@ -1,0 +1,38 @@
+- name: DevOps Mid Project Deployment
+  hosts: localhost
+  become: true
+
+  vars:
+    ghcr_username: "{{ github_actor }}"
+    ghcr_token: "{{ github_token }}"
+
+  tasks:
+
+    - name: Verify Docker installation
+      command: docker --version
+      register: docker_check
+      ignore_errors: yes
+
+    - name: Install Docker if missing
+      apt:
+        name: docker.io
+        state: present
+        update_cache: yes
+      when: docker_check.failed
+
+    - name: Ensure Docker service is running
+      service:
+        name: docker
+        state: started
+        enabled: true
+
+    - name: Login to GitHub Container Registry
+      docker_login:
+        registry_url: ghcr.io
+        username: "{{ ghcr_username }}"
+        password: "{{ ghcr_token }}"
+
+    - name: Deploy application using Docker Compose
+      command: docker compose up -d
+      args:
+        chdir: /home/abdo/mid-project/devops-mid-project
