@@ -136,9 +136,9 @@ jobs:
 
       - name: Set React environment variables
         run: |
-          railway variables set --service frontend \
-            NODE_ENV=production \
-            VITE_API_BASE_URL=https://${{ vars.RAILWAY_DOTNET_URL }}
+          railway variables --service frontend \
+            --set NODE_ENV=production \
+            --set VITE_API_BASE_URL=https://${{ vars.RAILWAY_DOTNET_URL }}
 
       - name: Deploy React Service
         run: railway up --service frontend
@@ -173,13 +173,13 @@ jobs:
 
       - name: Set Backend environment variables
         run: |
-          railway variables set --service backend \
-            ASPNETCORE_ENVIRONMENT=Production \
-            DB_HOST=${{ vars.DB_HOST }} \
-            DB_PORT=${{ vars.DB_PORT }} \
-            DB_NAME=${{ vars.DB_NAME }} \
-            DB_USER=${{ vars.DB_USER }} \
-            DB_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}
+          railway variables --service backend \
+            --set ASPNETCORE_ENVIRONMENT=Production \
+            --set DB_HOST=${{ vars.DB_HOST }} \
+            --set DB_PORT=${{ vars.DB_PORT }} \
+            --set DB_NAME=${{ vars.DB_NAME }} \
+            --set DB_USER=${{ vars.DB_USER }} \
+            --set DB_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}
 
       - name: Deploy Backend Service
         run: railway up --service backend
