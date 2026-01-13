@@ -63,7 +63,6 @@ jobs:
         working-directory: frontend
         run: npm run build
 
-      # 👇 ضفنا هنا ID عشان نقدر نرجع لنتيجة الخطوة دي تحت
       - name: Run GitLeaks scan
         id: gitleaks
         uses: gitleaks/gitleaks-action@v2
@@ -72,9 +71,6 @@ jobs:
           report-path: gitleaks.sarif
         continue-on-error: true
 
-      # ❌ شيلنا خطوة Ensure SARIF file exists خلاص مش محتاجينها
-
-      # 👇 الشرط ده معناه: ارفع التقرير بس لو الخطوة اللي فوق فشلت (يعني لقت ثغرات)
       - name: Upload GitLeaks report
         if: steps.gitleaks.outcome == 'failure'
         uses: github/codeql-action/upload-sarif@v3
@@ -204,4 +200,3 @@ jobs:
             -e db_user=${{ vars.DB_USER }} \
             -e db_port=${{ vars.DB_PORT }} \
             -e db_host=${{ vars.DB_HOST }}
-            
