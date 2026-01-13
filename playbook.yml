@@ -33,9 +33,10 @@
         password: "{{ ghcr_token }}"
 
     - name: Deploy application using Docker Compose
-      command: docker compose up -d
+      command: docker compose up -d --build --force-recreate
       args:
-        chdir: /home/abdo/mid-project/devops-mid-project
+        chdir: "{{ playbook_dir }}"
+        
       environment:
         MYSQL_ROOT_PASSWORD: "{{ mysql_root_password }}"
         DB_PASSWORD: "{{ mysql_root_password }}"
