@@ -12,15 +12,13 @@ on:
           - staging
           - production
 
+jobs:
 ###################################################
 # CI STAGE - .NET BACKEND
 ###################################################
-jobs:
   dotnet-ci:
     name: .NET Backend CI
-    # بننادي على الريبو المركزي
     uses: abdosaad203/centralized-automation-mid/.github/workflows/dotnet.yml@main
-    # بنديله صلاحيات يكتب ويرفع
     permissions:
       contents: read
       packages: write
@@ -30,7 +28,6 @@ jobs:
       project-path: "backend"
       build-configuration: "Release"
       run-tests: false
-    # عشان يقدر يعمل login للـ ghcr
     secrets: inherit
 
 ###################################################
@@ -49,7 +46,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          # مهم: بنجيب الهيستوري كله عشان gitleaks يشتغل صح
           fetch-depth: 0
 
       - name: Setup Node.js
@@ -67,7 +63,6 @@ jobs:
         working-directory: frontend
         run: npm run build
 
-      # الفحص الأمني
       - name: Run GitLeaks scan
         id: gitleaks
         uses: gitleaks/gitleaks-action@v2
@@ -76,9 +71,6 @@ jobs:
           report-path: gitleaks.sarif
         continue-on-error: true
 
-      # ✅ الحل السحري 1:
-      # بنقوله: لو ملف التقرير موجود (يعني فيه مشاكل) ارفعه.
-      # لو مش موجود (يعني مفيش مشاكل)، متعملش حاجة وعدي.
       - name: Upload GitLeaks report
         if: hashFiles('gitleaks.sarif') != ''
         uses: github/codeql-action/upload-sarif@v3
@@ -96,7 +88,6 @@ jobs:
         with:
           category: codeql-javascript
 
-      # بناء صورة الفرونت إند ورفعها
       - name: Build & Push React Docker Image
         uses: abdosaad203/centralized-automation-mid/.github/actions/react-docker-s2i@main
         with:
@@ -105,8 +96,8 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
           image_name: ${{ github.repository }}/frontend
           tag: latest
-          # تأكد إنك محتاج دي، لو مش مستخدمة في الاكشن شيلها
-          api-base-url: http://localhost:8080
+          # دي مش محتاجينها هنا لأن الصورة بتتبني، بس مش مشكلة لو سبتها
+          # api-base-url: http://localhost:8080 
 
       - name: Scan React image with Trivy
         uses: aquasecurity/trivy-action@master
@@ -116,7 +107,6 @@ jobs:
           output: trivy-react.sarif
         continue-on-error: true
 
-      # نفس المنطق هنا: ارفع التقرير بس لو الملف موجود
       - name: Upload Trivy report
         if: hashFiles('trivy-react.sarif') != ''
         uses: github/codeql-action/upload-sarif@v3
@@ -167,15 +157,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 1. بننزل الملفات اللي اتبنت فوق (Artifacts)
       - name: Download Build Artifacts
         uses: actions/download-artifact@v4
         with:
           name: dotnet-build
           path: backend
 
-      # ✅ الحل السحري 2:
-      # بنمسح ملف .gitignore عشان Railway ميتجاهلش ملفات الـ DLL اللي نزلناها
       - name: Remove gitignore to allow dll upload
         run: find . -name ".gitignore" -type f -delete
 
@@ -213,6 +200,15 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      # 🔥🔥🔥 التعديل السحري هنا 🔥🔥🔥
+      # لازم ننزل الملفات المبنية ونحطها في فولدر backend
+      # عشان الدوكر يلاقي ملفات الـ dll ويشتغل
+      - name: Download Build Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: dotnet-build  # ده الاسم اللي الريبو المركزي بيطلعه
+          path: backend
 
       - name: Run Ansible Playbook
         run: |
