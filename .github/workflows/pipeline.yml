@@ -17,12 +17,13 @@ on:
 ###################################################
 jobs:
   dotnet-ci:
+    name: .NET Backend CI
     uses: abdosaad203/centralized-automation-mid/.github/workflows/dotnet.yml@main
     with:
-      dotnet_version: "8.0.x"
-      project_path: "backend"
-      build_configuration: "Release"
-      run_tests: false
+      dotnet-version: "8.0.x"
+      project-path: "backend"
+      build-configuration: "Release"
+      run-tests: false
 
 
 ###################################################
