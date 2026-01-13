@@ -31,10 +31,8 @@ services:
   frontend:
     build:
       context: ./frontend
-      args:
-        VITE_API_BASE_URL: http://backend:8080
     ports:
-      - "4200:4200"
+      - "4200:80"
     depends_on:
       - backend
 

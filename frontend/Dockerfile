@@ -1,17 +1,17 @@
-FROM node:18
-
+# -------- Build stage --------
+FROM node:18 AS build
 WORKDIR /app
 
 COPY package*.json ./
 RUN npm install
-
 COPY . .
-
-# مهم جدًا
-ARG VITE_API_BASE_URL
-ENV VITE_API_BASE_URL=$VITE_API_BASE_URL
-
 RUN npm run build
 
-EXPOSE 4200
-CMD ["npm", "run", "preview", "--", "--host", "0.0.0.0", "--port", "4200"]
+# -------- Nginx stage --------
+FROM nginx:alpine
+
+COPY nginx.conf /etc/nginx/nginx.conf
+COPY --from=build /app/dist /usr/share/nginx/html
+
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
