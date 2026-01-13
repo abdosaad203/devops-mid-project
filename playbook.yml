@@ -1,5 +1,6 @@
 - name: DevOps Mid Project Deployment
   hosts: localhost
+  connection: local
   become: true
 
   vars:
@@ -7,24 +8,29 @@
     ghcr_token: "{{ github_token }}"
 
   tasks:
-
-    - name: Verify Docker installation
-      command: docker --version
-      register: docker_check
-      ignore_errors: yes
-
-    - name: Install Docker if missing
-      yum:
-        name: docker.io
-        state: present
+    - name: Update apt cache
+      apt:
         update_cache: yes
-      when: docker_check.failed
+        cache_valid_time: 3600
+
+    - name: Install required system packages
+      apt:
+        name:
+          - docker.io
+          - docker-compose-plugin
+        state: present
 
     - name: Ensure Docker service is running
       service:
         name: docker
         state: started
         enabled: true
+
+    - name: Add user to docker group
+      user:
+        name: "{{ ansible_user_id }}"
+        groups: docker
+        append: yes
 
     - name: Login to GitHub Container Registry
       docker_login:
@@ -36,7 +42,6 @@
       command: docker compose up -d --build --force-recreate
       args:
         chdir: "{{ playbook_dir }}"
-        
       environment:
         MYSQL_ROOT_PASSWORD: "{{ mysql_root_password }}"
         DB_PASSWORD: "{{ mysql_root_password }}"
