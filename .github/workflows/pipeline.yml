@@ -66,19 +66,7 @@ jobs:
       - name: Run GitLeaks scan
         id: gitleaks
         uses: gitleaks/gitleaks-action@v2
-        with:
-          report-format: sarif
-          report-path: gitleaks.sarif
         continue-on-error: true
-
-      # 👇 التعديل هنا: الرفع هيشتغل بس لو الملف "موجود" فعلاً
-      # hashFiles بترجع قيمة لو الملف موجود، وفاضية لو مش موجود
-      - name: Upload GitLeaks report
-        if: hashFiles('gitleaks.sarif') != ''
-        uses: github/codeql-action/upload-sarif@v3
-        with:
-          sarif_file: gitleaks.sarif
-          category: gitleaks
 
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
@@ -163,7 +151,6 @@ jobs:
           name: dotnet-build
           path: backend
 
-      # 👇👇👇 التعديل القاتل: مسح .gitignore عشان Railway يشوف ملفات الـ dll ويرفعها 👇👇👇
       - name: Remove gitignore to allow dll upload
         run: find . -name ".gitignore" -type f -delete
 
