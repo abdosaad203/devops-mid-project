@@ -96,8 +96,6 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
           image_name: ${{ github.repository }}/frontend
           tag: latest
-          # دي مش محتاجينها هنا لأن الصورة بتتبني، بس مش مشكلة لو سبتها
-          # api-base-url: http://localhost:8080 
 
       - name: Scan React image with Trivy
         uses: aquasecurity/trivy-action@master
@@ -201,15 +199,24 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 🔥🔥🔥 التعديل السحري هنا 🔥🔥🔥
-      # لازم ننزل الملفات المبنية ونحطها في فولدر backend
-      # عشان الدوكر يلاقي ملفات الـ dll ويشتغل
+      # 1. تنزيل الملفات المبنية (الشحنة)
       - name: Download Build Artifacts
         uses: actions/download-artifact@v4
         with:
-          name: dotnet-build  # ده الاسم اللي الريبو المركزي بيطلعه
+          name: dotnet-build
           path: backend
 
+      # 2. خطوة التأكد (Debug): عشان نشوف بعيننا الملفات موجودة ولا لأ
+      - name: List files in backend (Debug)
+        run: ls -R backend/
+
+      # 3. 🔥 الحل السحري: مسح ملفات التجاهل عشان الدوكر مايتجاهلش الـ DLLs
+      - name: Remove ignore files
+        run: |
+          find backend -name ".dockerignore" -type f -delete
+          find backend -name ".gitignore" -type f -delete
+
+      # 4. تشغيل الأنسبل
       - name: Run Ansible Playbook
         run: |
           ansible-playbook playbook.yml \
