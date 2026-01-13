@@ -8,17 +8,13 @@
     ghcr_token: "{{ github_token }}"
 
   tasks:
-    - name: Update apt cache
-      apt:
-        update_cache: yes
-        cache_valid_time: 3600
-
-    - name: Install required system packages
-      apt:
+    - name: Install Docker and Compose plugin
+      dnf:
         name:
-          - docker.io
+          - docker
           - docker-compose-plugin
         state: present
+      ignore_errors: yes
 
     - name: Ensure Docker service is running
       service:
@@ -31,6 +27,7 @@
         name: "{{ ansible_user_id }}"
         groups: docker
         append: yes
+      ignore_errors: yes
 
     - name: Login to GitHub Container Registry
       docker_login:
