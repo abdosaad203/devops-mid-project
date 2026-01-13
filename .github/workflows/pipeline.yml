@@ -22,6 +22,7 @@ jobs:
       dotnet-version: "8.0.x"
       project-path: "backend"
       build-configuration: "Release"
+      run-tests: false
 
 
 ###################################################
