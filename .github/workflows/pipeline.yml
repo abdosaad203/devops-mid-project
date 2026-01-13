@@ -21,6 +21,7 @@ jobs:
     with:
       dotnet-version: "8.0.x"
       project-path: "backend"
+      build-configuration: "Release"
 
 
 ###################################################
