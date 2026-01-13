@@ -63,6 +63,8 @@ jobs:
       - name: Build React app
         working-directory: frontend
         run: npm run build
+        env:
+          VITE_API_BASE_URL: http://localhost:8080/api
 
       - name: Run GitLeaks scan
         id: gitleaks
