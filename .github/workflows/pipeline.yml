@@ -66,7 +66,18 @@ jobs:
       - name: Run GitLeaks scan
         id: gitleaks
         uses: gitleaks/gitleaks-action@v2
+        with:
+          report-format: sarif
+          report-path: gitleaks.sarif
         continue-on-error: true
+
+      # 👇 التعديل النهائي: لو الملف موجود ارفعه، لو مش موجود كمل (بأمان تام)
+      - name: Upload GitLeaks report
+        if: hashFiles('gitleaks.sarif') != ''
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: gitleaks.sarif
+          category: gitleaks
 
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
@@ -146,12 +157,14 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # 1. نزل ملفات الـ DLL المبنية
       - name: Download Build Artifacts
         uses: actions/download-artifact@v4
         with:
           name: dotnet-build
           path: backend
 
+      # 2. امسح gitignore عشان Railway يرضى يرفع ملفات الـ DLL
       - name: Remove gitignore to allow dll upload
         run: find . -name ".gitignore" -type f -delete
 
