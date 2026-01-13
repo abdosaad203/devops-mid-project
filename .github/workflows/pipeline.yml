@@ -19,6 +19,10 @@ jobs:
   dotnet-ci:
     name: .NET Backend CI
     uses: abdosaad203/centralized-automation-mid/.github/workflows/dotnet.yml@main
+    permissions:
+      contents: read
+      packages: write
+      security-events: write
     with:
       dotnet-version: "8.0.x"
       project-path: "backend"
@@ -35,11 +39,9 @@ jobs:
     needs: dotnet-ci
 
     steps:
-      # 1️⃣ Checkout
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2️⃣ Setup Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -47,17 +49,14 @@ jobs:
           cache: npm
           cache-dependency-path: frontend/package-lock.json
 
-      # 3️⃣ Install dependencies
       - name: Install dependencies
         working-directory: frontend
         run: npm install
 
-      # 4️⃣ Build React app (creates dist/)
       - name: Build React app
         working-directory: frontend
         run: npm run build
 
-      # 5️⃣ GitLeaks Scan
       - name: Run GitLeaks scan
         uses: gitleaks/gitleaks-action@v2
         with:
@@ -70,7 +69,6 @@ jobs:
         with:
           sarif_file: gitleaks.sarif
 
-      # 6️⃣ CodeQL Analysis
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
         with:
@@ -79,7 +77,6 @@ jobs:
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3
 
-      # 7️⃣ Build & Push React Image (Custom S2I Action)
       - name: Build & Push React Docker Image
         uses: abdosaad203/centralized-automation-mid/.github/actions/react-docker-s2i@main
         with:
@@ -90,7 +87,6 @@ jobs:
           tag: latest
           api-base-url: http://localhost:8080
 
-      # 8️⃣ Trivy Image Scan
       - name: Scan React image with Trivy
         uses: aquasecurity/trivy-action@master
         with:
