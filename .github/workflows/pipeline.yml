@@ -25,7 +25,6 @@ jobs:
       build-configuration: "Release"
       run-tests: false
 
-
 ###################################################
 # CI STAGE - REACT FRONTEND
 ###################################################
@@ -52,12 +51,33 @@ jobs:
         working-directory: frontend
         run: npm install
 
-      # 4️⃣ Build React app
+      # 4️⃣ Build React app (creates dist/)
       - name: Build React app
         working-directory: frontend
         run: npm run build
 
-      # 5️⃣ GitLeaks Scan
+      ###################################################
+      # Docker Build & Push (FIXED – no custom action)
+      ###################################################
+      - name: Login to GHCR
+        run: |
+          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io \
+            -u ${{ github.actor }} --password-stdin
+
+      - name: Build React Docker image
+        run: |
+          docker build \
+            -t ghcr.io/${{ github.repository }}/frontend:latest \
+            -f frontend/Dockerfile \
+            frontend
+
+      - name: Push React Docker image
+        run: |
+          docker push ghcr.io/${{ github.repository }}/frontend:latest
+
+      ###################################################
+      # Security Scans
+      ###################################################
       - name: Run GitLeaks scan
         uses: gitleaks/gitleaks-action@v2
         with:
@@ -70,7 +90,6 @@ jobs:
         with:
           sarif_file: gitleaks.sarif
 
-      # 6️⃣ CodeQL Analysis
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
         with:
@@ -79,18 +98,6 @@ jobs:
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3
 
-      # 7️⃣ Build & Push React Image (Custom S2I Action)
-      - name: Build & Push React Docker Image
-        uses: abdosaad203/centralized-automation-mid/.github/actions/react-docker-s2i@main
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-          image-name: ${{ github.repository }}/frontend
-          tag: latest
-          api-base-url: http://localhost:8080
-
-      # 8️⃣ Trivy Image Scan
       - name: Scan React image with Trivy
         uses: aquasecurity/trivy-action@master
         with:
@@ -104,7 +111,6 @@ jobs:
         with:
           sarif_file: trivy-react.sarif
 
-
 ###################################################
 # CD STAGE - REACT TO RAILWAY
 ###################################################
@@ -116,31 +122,23 @@ jobs:
     environment: ${{ inputs.environment }}
 
     steps:
-      # 1️⃣ Checkout
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2️⃣ Install Railway CLI
       - name: Install Railway CLI
         run: npm install -g @railway/cli
 
-      # 3️⃣ Railway Login
       - name: Railway Login
-        run: railway login --token $RAILWAY_TOKEN
-        env:
-          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+        run: railway login --token ${{ secrets.RAILWAY_TOKEN }}
 
-      # 4️⃣ Set React environment variables
       - name: Set React environment variables
         run: |
           railway variables set \
             NODE_ENV=production \
             VITE_API_BASE_URL=https://${{ vars.RAILWAY_DOTNET_URL }}
 
-      # 5️⃣ Deploy React Service
-      - name: Deploy React to Railway
+      - name: Deploy React Service
         run: railway up --service frontend
-
 
 ###################################################
 # CD STAGE - DOTNET TO RAILWAY
@@ -153,21 +151,15 @@ jobs:
     environment: ${{ inputs.environment }}
 
     steps:
-      # 1️⃣ Checkout
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2️⃣ Install Railway CLI
       - name: Install Railway CLI
         run: npm install -g @railway/cli
 
-      # 3️⃣ Railway Login
       - name: Railway Login
-        run: railway login --token $RAILWAY_TOKEN
-        env:
-          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+        run: railway login --token ${{ secrets.RAILWAY_TOKEN }}
 
-      # 4️⃣ Set Backend environment variables
       - name: Set Backend environment variables
         run: |
           railway variables set \
@@ -178,10 +170,8 @@ jobs:
             DB_USER=${{ vars.DB_USER }} \
             DB_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}
 
-      # 5️⃣ Deploy Backend Service
-      - name: Deploy .NET Backend to Railway
+      - name: Deploy Backend Service
         run: railway up --service backend
-
 
 ###################################################
 # CD STAGE - DEPLOY TO DEV (ANSIBLE)
@@ -196,11 +186,9 @@ jobs:
     environment: dev
 
     steps:
-      # 1️⃣ Checkout repository
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2️⃣ Run Ansible Playbook
       - name: Run Ansible Playbook
         run: |
           ansible-playbook playbook.yml \
