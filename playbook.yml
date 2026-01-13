@@ -14,7 +14,7 @@
       ignore_errors: yes
 
     - name: Install Docker if missing
-      apt:
+      yum:
         name: docker.io
         state: present
         update_cache: yes
@@ -38,6 +38,7 @@
         chdir: /home/abdo/mid-project/devops-mid-project
       environment:
         MYSQL_ROOT_PASSWORD: "{{ mysql_root_password }}"
+        DB_PASSWORD: "{{ mysql_root_password }}"
         DB_NAME: "{{ db_name }}"
         DB_USER: "{{ db_user }}"
         DB_PORT: "{{ db_port }}"
