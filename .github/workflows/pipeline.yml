@@ -37,12 +37,14 @@ jobs:
     name: React Frontend CI
     runs-on: ubuntu-latest
     needs: dotnet-ci
+    # 👇 1. دي الصلاحيات الضرورية عشان يرفع التقارير (مهمة جداً) 👇
     permissions:
       contents: read
       packages: write
       security-events: write
 
     steps:
+      # 👇 2. لازم fetch-depth: 0 عشان gitleaks يشتغل صح 👇
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
@@ -70,10 +72,19 @@ jobs:
           report-path: gitleaks.sarif
         continue-on-error: true
 
+      # خطوة تأكيدية: لو gitleaks مطلعش ملف (لأنه ملقاش حاجة)، بنعمل ملف فاضي عشان الرفع ميفشلش
+      - name: Ensure SARIF file exists
+        if: always()
+        run: |
+          if [ ! -f gitleaks.sarif ]; then
+            echo '{"runs":[],"version":"2.1.0"}' > gitleaks.sarif
+          fi
+
       - name: Upload GitLeaks report
         uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: gitleaks.sarif
+          category: gitleaks
 
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
@@ -82,6 +93,8 @@ jobs:
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3
+        with:
+          category: codeql-javascript
 
       - name: Build & Push React Docker Image
         uses: abdosaad203/centralized-automation-mid/.github/actions/react-docker-s2i@main
@@ -105,6 +118,7 @@ jobs:
         uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: trivy-react.sarif
+          category: trivy-react
 
 ###################################################
 # CD STAGE - REACT TO RAILWAY
