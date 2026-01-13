@@ -24,6 +24,7 @@ jobs:
       project-path: "backend"
       build-configuration: "Release"
       run-tests: false
+    secrets: inherit
 
 ###################################################
 # CI STAGE - REACT FRONTEND
@@ -56,28 +57,7 @@ jobs:
         working-directory: frontend
         run: npm run build
 
-      ###################################################
-      # Docker Build & Push (FIXED – no custom action)
-      ###################################################
-      - name: Login to GHCR
-        run: |
-          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io \
-            -u ${{ github.actor }} --password-stdin
-
-      - name: Build React Docker image
-        run: |
-          docker build \
-            -t ghcr.io/${{ github.repository }}/frontend:latest \
-            -f frontend/Dockerfile \
-            frontend
-
-      - name: Push React Docker image
-        run: |
-          docker push ghcr.io/${{ github.repository }}/frontend:latest
-
-      ###################################################
-      # Security Scans
-      ###################################################
+      # 5️⃣ GitLeaks Scan
       - name: Run GitLeaks scan
         uses: gitleaks/gitleaks-action@v2
         with:
@@ -90,6 +70,7 @@ jobs:
         with:
           sarif_file: gitleaks.sarif
 
+      # 6️⃣ CodeQL Analysis
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
         with:
@@ -98,6 +79,18 @@ jobs:
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3
 
+      # 7️⃣ Build & Push React Image (Custom S2I Action)
+      - name: Build & Push React Docker Image
+        uses: abdosaad203/centralized-automation-mid/.github/actions/react-docker-s2i@main
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+          image_name: ${{ github.repository }}/frontend
+          tag: latest
+          api-base-url: http://localhost:8080
+
+      # 8️⃣ Trivy Image Scan
       - name: Scan React image with Trivy
         uses: aquasecurity/trivy-action@master
         with:
@@ -133,7 +126,7 @@ jobs:
 
       - name: Set React environment variables
         run: |
-          railway variables set \
+          railway variables set --service frontend \
             NODE_ENV=production \
             VITE_API_BASE_URL=https://${{ vars.RAILWAY_DOTNET_URL }}
 
@@ -162,7 +155,7 @@ jobs:
 
       - name: Set Backend environment variables
         run: |
-          railway variables set \
+          railway variables set --service backend \
             ASPNETCORE_ENVIRONMENT=Production \
             DB_HOST=${{ vars.DB_HOST }} \
             DB_PORT=${{ vars.DB_PORT }} \
@@ -193,4 +186,9 @@ jobs:
         run: |
           ansible-playbook playbook.yml \
             -e github_actor=${{ github.actor }} \
-            -e github_token=${{ secrets.GITHUB_TOKEN }}
+            -e github_token=${{ secrets.GITHUB_TOKEN }} \
+            -e mysql_root_password=${{ secrets.MYSQL_ROOT_PASSWORD }} \
+            -e db_name=${{ vars.DB_NAME }} \
+            -e db_user=${{ vars.DB_USER }} \
+            -e db_port=${{ vars.DB_PORT }} \
+            -e db_host=${{ vars.DB_HOST }}

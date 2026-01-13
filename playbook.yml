@@ -36,3 +36,10 @@
       command: docker compose up -d
       args:
         chdir: /home/abdo/mid-project/devops-mid-project
+      environment:
+        MYSQL_ROOT_PASSWORD: "{{ mysql_root_password }}"
+        DB_NAME: "{{ db_name }}"
+        DB_USER: "{{ db_user }}"
+        DB_PORT: "{{ db_port }}"
+        DB_HOST: "{{ db_host }}"
+        GITHUB_ACTOR: "{{ github_actor }}"
