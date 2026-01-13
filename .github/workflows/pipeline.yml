@@ -124,6 +124,8 @@ jobs:
     needs: react-ci
     if: ${{ inputs.environment != 'dev' }}
     environment: ${{ inputs.environment }}
+    env:
+      RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
 
     steps:
       - name: Checkout repository
@@ -131,9 +133,6 @@ jobs:
 
       - name: Install Railway CLI
         run: npm install -g @railway/cli
-
-      - name: Railway Login
-        run: railway login --token ${{ secrets.RAILWAY_TOKEN }}
 
       - name: Set React environment variables
         run: |
@@ -153,6 +152,8 @@ jobs:
     needs: dotnet-ci
     if: ${{ inputs.environment != 'dev' }}
     environment: ${{ inputs.environment }}
+    env:
+      RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
 
     steps:
       - name: Checkout repository
@@ -169,9 +170,6 @@ jobs:
 
       - name: Install Railway CLI
         run: npm install -g @railway/cli
-
-      - name: Railway Login
-        run: railway login --token ${{ secrets.RAILWAY_TOKEN }}
 
       - name: Set Backend environment variables
         run: |
