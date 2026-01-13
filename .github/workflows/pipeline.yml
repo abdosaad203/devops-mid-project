@@ -155,6 +155,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Download Build Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: dotnet-build
+          path: backend
+
       - name: Install Railway CLI
         run: npm install -g @railway/cli
 
@@ -168,35 +174,4 @@ jobs:
             DB_HOST=${{ vars.DB_HOST }} \
             DB_PORT=${{ vars.DB_PORT }} \
             DB_NAME=${{ vars.DB_NAME }} \
-            DB_USER=${{ vars.DB_USER }} \
-            DB_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}
-
-      - name: Deploy Backend Service
-        run: railway up --service backend
-
-###################################################
-# CD STAGE - DEPLOY TO DEV (ANSIBLE)
-###################################################
-  deploy-dev:
-    name: Deploy to Dev (Local with Ansible)
-    runs-on: [self-hosted, linux]
-    needs:
-      - dotnet-ci
-      - react-ci
-    if: ${{ inputs.environment == 'dev' }}
-    environment: dev
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Run Ansible Playbook
-        run: |
-          ansible-playbook playbook.yml \
-            -e github_actor=${{ github.actor }} \
-            -e github_token=${{ secrets.GITHUB_TOKEN }} \
-            -e mysql_root_password=${{ secrets.MYSQL_ROOT_PASSWORD }} \
-            -e db_name=${{ vars.DB_NAME }} \
-            -e db_user=${{ vars.DB_USER }} \
-            -e db_port=${{ vars.DB_PORT }} \
-            -e db_host=${{ vars.DB_HOST }}
+            DB_USER=${{
