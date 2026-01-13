@@ -83,9 +83,12 @@ jobs:
       - name: Build & Push React Docker Image
         uses: abdosaad203/centralized-automation-mid/.github/actions/react-docker-s2i@main
         with:
-          image_name: ghcr.io/${{ github.repository }}/frontend
-          context: frontend
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+          image-name: ${{ github.repository }}/frontend
+          tag: latest
+          api-base-url: http://localhost:8080
 
       # 8️⃣ Trivy Image Scan
       - name: Scan React image with Trivy
