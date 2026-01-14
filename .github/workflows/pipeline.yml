@@ -200,24 +200,20 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 1. تنزيل الملفات المبنية (الشحنة)
       - name: Download Build Artifacts
         uses: actions/download-artifact@v4
         with:
           name: dotnet-build
           path: backend
 
-      # 2. خطوة التأكد (Debug): عشان نشوف بعيننا الملفات موجودة ولا لأ
       - name: List files in backend (Debug)
         run: ls -R backend/
 
-      # 3. 🔥 الحل السحري: مسح ملفات التجاهل عشان الدوكر مايتجاهلش الـ DLLs
       - name: Remove ignore files
         run: |
           find backend -name ".dockerignore" -type f -delete
           find backend -name ".gitignore" -type f -delete
 
-      # 4. تشغيل الأنسبل
       - name: Run Ansible Playbook
         run: |
           ansible-playbook playbook.yml \

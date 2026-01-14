@@ -5,7 +5,7 @@ using Pomelo.EntityFrameworkCore.MySql;
 var builder = WebApplication.CreateBuilder(args);
 
 // -------------------------------------------------------
-// 🟦 Configure MySQL DbContext with retry during runtime
+// Configure MySQL DbContext with retry during runtime
 // -------------------------------------------------------
 var serverVersion = new MySqlServerVersion(new Version(8, 0, 0));
 
@@ -56,7 +56,7 @@ builder.Services.AddSwaggerGen();
 var app = builder.Build();
 
 // -------------------------------------------------------
-// 🔥 Apply migrations with retry during application startup
+// Apply migrations with retry during application startup
 // -------------------------------------------------------
 using (var scope = app.Services.CreateScope())
 {
