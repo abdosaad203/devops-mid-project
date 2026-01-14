@@ -138,7 +138,7 @@ jobs:
         run: |
           railway variables --service frontend \
             --set NODE_ENV=production \
-            --set VITE_API_BASE_URL=https://${{ vars.RAILWAY_DOTNET_URL }}
+            --set VITE_API_BASE_URL=https://${{ vars.RAILWAY_DOTNET_URL }}/api
 
       - name: Deploy React Service
         run: railway up --service frontend
