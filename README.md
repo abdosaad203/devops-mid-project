@@ -59,83 +59,77 @@ Railway dashboard showing the healthy status of the 3-tier architecture (Fronten
 
 Service Status: <img width="1280" height="701" alt="4-railway-dashboard" src="https://github.com/user-attachments/assets/c21be76c-05e4-4362-872d-a1fac1a78ac4" />
 
+---
 
-🛠️ Technologies & Tools
-🔹 Application Stack
-Frontend: React (Vite) + TypeScript
+## 🛠️ Technologies & Tools
 
-Backend: .NET 8 Web API
+### 🔹 Application Stack
+* **Frontend:** React (Vite) + TypeScript
+* **Backend:** .NET 8 Web API
+* **Database:** MySQL 8.0
 
-Database: MySQL 8.0
+### 🔹 DevOps Infrastructure
+* **Containerization:** Docker & Docker Compose
+* **Orchestration:** Ansible (Playbooks & Inventory management)
+* **Cloud Platform:** Railway (PaaS)
+* **Artifact Registry:** GitHub Container Registry (GHCR)
 
-🔹 DevOps Infrastructure
-Containerization: Docker & Docker Compose
+### 🔹 CI/CD & Automation
+* **GitHub Actions:** Primary CI/CD tool.
+* **Reusable Workflows:** Centralized logic for maintainability.
+* **Self-Hosted Runners:** Used for deploying to the Dev environment (CentOS).
 
-Orchestration: Ansible (Playbooks & Inventory management)
+### 🔹 Security Tools
+* **GitLeaks:** Scans code for hardcoded secrets/passwords.
+* **Trivy:** Scans Docker images for CVEs (Common Vulnerabilities).
+* **CodeQL:** Static Application Security Testing (SAST).
 
-Cloud Platform: Railway (PaaS)
+---
 
-Artifact Registry: GitHub Container Registry (GHCR)
+## ⚙️ Key Features Implemented
 
-🔹 CI/CD & Automation
-GitHub Actions: Primary CI/CD tool.
+### 1. Multi-Environment Deployment Strategy
+* **Dev:** Deployed using **Ansible** on a local runner to simulate an on-premise data center. It installs Docker, authenticates with GHCR, and runs containers via Compose.
+* **Staging:** Automatically deployed to **Railway** for immediate feedback.
+* **Production:** Deployed to **Railway** but gated behind a "Required Reviewer" rule to prevent accidental breaking changes.
 
-Reusable Workflows: Centralized logic for maintainability.
+### 2. Intelligent Variable Injection
+* The pipeline dynamically injects environment variables (Database URLs, API Endpoints) at runtime.
+* Example: The Frontend connects to the Staging API in Staging, and the Production API in Production automatically.
 
-Self-Hosted Runners: Used for deploying to the Dev environment (CentOS).
+### 3. "Fix & Secure" Approach
+* **Dockerfile Optimization:** Fixed pathing issues for .NET build artifacts.
+* **Secret Management:** All sensitive data (Tokens, Passwords) are stored in GitHub Secrets, never in the code.
+* **Railway CLI Integration:** Automated the CLI authentication and deployment commands within the pipeline.
 
-🔹 Security Tools
-GitLeaks: Scans code for hardcoded secrets/passwords.
+---
 
-Trivy: Scans Docker images for CVEs (Common Vulnerabilities).
+## 💻 How to Run Locally
 
-CodeQL: Static Application Security Testing (SAST).
-
-⚙️ Key Features Implemented
-1. Multi-Environment Deployment Strategy
-Dev: Deployed using Ansible on a local runner to simulate an on-premise data center. It installs Docker, authenticates with GHCR, and runs containers via Compose.
-
-Staging: Automatically deployed to Railway for immediate feedback.
-
-Production: Deployed to Railway but gated behind a "Required Reviewer" rule to prevent accidental breaking changes.
-
-2. Intelligent Variable Injection
-The pipeline dynamically injects environment variables (Database URLs, API Endpoints) at runtime.
-
-Example: The Frontend connects to the Staging API in Staging, and the Production API in Production automatically.
-
-3. "Fix & Secure" Approach
-Dockerfile Optimization: Fixed pathing issues for .NET build artifacts.
-
-Secret Management: All sensitive data (Tokens, Passwords) are stored in GitHub Secrets, never in the code.
-
-Railway CLI Integration: Automated the CLI authentication and deployment commands within the pipeline.
-
-💻 How to Run Locally
 If you wish to run the project on your local machine without the pipeline:
 
-Clone the Repository:
+1.  **Clone the Repository:**
+    ```bash
+    git clone [https://github.com/abdosaad203/devops-mid-project.git](https://github.com/abdosaad203/devops-mid-project.git)
+    cd devops-mid-project
+    ```
 
-Bash
+2.  **Run with Docker Compose:**
+    ```bash
+    docker compose up -d --build
+    ```
 
-git clone https://github.com/abdosaad203/devops-mid-project.git
-cd devops-mid-project
-Run with Docker Compose:
+3.  **Access the Application:**
+    * Frontend: `http://localhost:8081`
+    * Backend Swagger: `http://localhost:8080/swagger`
 
-Bash
+---
 
-docker compose up -d --build
-Access the Application:
+## 👤 Author
 
-Frontend: http://localhost:8081
+**Abdo Saad**
+* **Role:** DevOps Engineer
+* **GitHub:** [abdosaad203](https://github.com/abdosaad203)
 
-Backend Swagger: http://localhost:8080/swagger
-
-👤 Author
-Abdo Saad
-
-Role: DevOps Engineer
-
-GitHub: abdosaad203
-
-Built with ❤️, YAML, and Docker.
+---
+*Built with ❤️, YAML, and Docker.*
