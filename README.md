@@ -1,123 +1,136 @@
-# 🚀 DevOps End-to-End Deployment Project
+# 🚀 End-to-End DevOps CI/CD Project
 
 ![CI/CD Pipeline](https://github.com/abdosaad203/devops-mid-project/actions/workflows/pipeline.yml/badge.svg?branch=main)
-![Railway Deployment](https://img.shields.io/badge/Railway-Deployed-success)
+![Railway Deployment](https://img.shields.io/badge/Railway-Production-success)
 ![Docker](https://img.shields.io/badge/Docker-Containers-blue)
 ![Ansible](https://img.shields.io/badge/Ansible-Configuration-red)
+![Security](https://img.shields.io/badge/Security-GitLeaks%20%7C%20Trivy-orange)
 
 ## 📖 Project Overview
 
-This project demonstrates a complete **DevOps CI/CD pipeline** for a 3-tier web application (React Frontend, .NET Backend, MySQL Database). The goal was to automate the build, test, security scanning, and deployment processes across multiple environments (**Dev**, **Staging**, and **Production**).
+This project implements a robust, production-grade **DevOps CI/CD Pipeline** for a 3-tier web application (React Frontend, .NET 8 Backend, MySQL Database).
 
-The infrastructure utilizes **Docker** for containerization, **Ansible** for local self-hosted configuration, and **Railway** for cloud deployments, orchestrated entirely by **GitHub Actions**.
+The goal was to automate the entire software delivery lifecycle, starting from code commit to deployment across three distinct environments:
+1.  **Development:** Self-hosted on-premise simulation using **Ansible** & **Docker**.
+2.  **Staging:** Automated cloud deployment to **Railway** for QA/Testing.
+3.  **Production:** Protected cloud deployment to **Railway** with **Approval Gates**.
+
+The project focuses on **Automation**, **Security**, and **Scalability**, utilizing modern DevOps practices like Infrastructure as Code (IaC), Containerization, and Secret Management.
 
 ---
 
 ## 🏗️ Architecture & Workflow
 
-1.  **Code Commit:** Developers push code to the `main` branch.
-2.  **Continuous Integration (CI):**
-    * **Reusable Workflows:** Leveraging a centralized repository for standardized build logic.
-    * **Build & Test:** Compiling .NET and React applications.
-    * **Security Scans:**
-        * **GitLeaks:** Detecting hardcoded secrets.
-        * **Trivy:** Scanning Docker images for vulnerabilities.
-        * **CodeQL:** Static code analysis.
-    * **Artifacts:** Pushing Docker images to **GitHub Container Registry (GHCR)**.
-3.  **Continuous Deployment (CD):**
-    * **Dev Environment:** Deployed to a **Self-Hosted Runner (CentOS)** using **Ansible Playbooks** and Docker Compose.
-    * **Staging Environment:** Automated deployment to **Railway** (Cloud Platform) for QA.
-    * **Production Environment:** Gated deployment to **Railway** requiring **Manual Approval** via GitHub Environments.
+The pipeline is orchestrated using **GitHub Actions** with a modular design (Reusable Workflows).
 
----
+```mermaid
+graph TD;
+    User-->|Push Code| GitHub_Repo;
+    GitHub_Repo-->|Trigger| CI_Pipeline;
+    CI_Pipeline-->|Build & Test| Dotnet_React;
+    CI_Pipeline-->|Security Scan| Trivy_GitLeaks;
+    CI_Pipeline-->|Push Images| GHCR_Registry;
+    GHCR_Registry-->|Deploy| Dev_Env[Dev: Ansible/Local];
+    GHCR_Registry-->|Deploy| Staging_Env[Staging: Railway];
+    GHCR_Registry-->|Wait for Approval| Prod_Gate{Manual Approval};
+    Prod_Gate-->|Approved| Prod_Env[Production: Railway];
+    📸 Project Showcase (Verification)
+1. 🛡️ Security & Governance: Production Approval Gate
+To ensure stability, the Production environment is protected. The pipeline pauses and waits for manual admin approval before deploying.
 
-## 🛠️ Tech Stack
+Proof of Protection Rules: (Drag & drop image 1-approval-gate.png here)
 
-### Application
-* **Frontend:** React (Vite) + TypeScript
-* **Backend:** .NET 8 Web API
-* **Database:** MySQL
+2. ✅ CI/CD Pipeline Success
+A fully green pipeline indicating successful Build, Test, Security Scans, and Deployments to all environments.
 
-### DevOps & Infrastructure
-* **Containerization:** Docker & Docker Compose
-* **CI/CD:** GitHub Actions (Pipelines & Reusable Workflows)
-* **Configuration Management:** Ansible
-* **Cloud Platform:** Railway
-* **Package Registry:** GitHub Container Registry (GHCR)
-* **OS:** CentOS Stream (Self-Hosted Runner)
+Full Pipeline Execution: (Drag & drop image 2-pipeline-success.png here)
 
-### Security
-* **Secret Scanning:** GitLeaks
-* **Vulnerability Scanning:** Trivy
-* **SAST:** CodeQL
+3. 🚀 Live Production Application
+The application running live on the Production domain, connected to the database, serving real traffic.
 
----
+Frontend & Backend Connectivity: (Drag & drop image 3-production-live.png here)
 
-## 🚀 Key Features implemented
+4. 🚆 Infrastructure Dashboard
+Railway dashboard showing the healthy status of the 3-tier architecture (Frontend, Backend, Database) in the Production environment.
 
-### 1. Multi-Environment Deployment strategy
-* **Dev:** Deployed locally on a self-hosted runner to simulate on-premise servers using Ansible.
-* **Staging:** Cloud deployment on Railway with live URLs for testing.
-* **Production:** Protected environment with **Approval Gates** to ensure stability before release.
+Service Status: (Drag & drop image 4-railway-dashboard.png here)
 
-### 2. Intelligent Automation
-* **Dynamic Variable Injection:** Injecting API URLs and Database credentials at runtime/build time (e.g., `VITE_API_BASE_URL`).
-* **Ansible Automation:** Automatically detecting OS (CentOS), installing Docker/dnf packages, and managing container orchestration.
+🛠️ Technologies & Tools
+🔹 Application Stack
+Frontend: React (Vite) + TypeScript
 
-### 3. Security-First Approach
-* Pipeline fails immediately if secrets are detected (GitLeaks).
-* Container images are scanned for high-severity vulnerabilities before deployment (Trivy).
+Backend: .NET 8 Web API
 
----
+Database: MySQL 8.0
 
-## 📸 Project Screenshots
+🔹 DevOps Infrastructure
+Containerization: Docker & Docker Compose
 
-### 1. CI/CD Pipeline Success
-*(Replace this text with a link to your pipeline summary screenshot)*
-![Pipeline Success](./screenshots/pipeline-success.png)
+Orchestration: Ansible (Playbooks & Inventory management)
 
-### 2. Manual Approval for Production
-The pipeline pauses and waits for admin approval before deploying to Production.
-![Production Approval](./screenshots/approval-gate.png)
+Cloud Platform: Railway (PaaS)
 
-### 3. Application Running on Production
-**Frontend:**
-![Frontend](./screenshots/frontend-prod.png)
+Artifact Registry: GitHub Container Registry (GHCR)
 
-**Backend Swagger:**
-![Swagger](./screenshots/backend-swagger.png)
+🔹 CI/CD & Automation
+GitHub Actions: Primary CI/CD tool.
 
-### 4. Railway Dashboard (Staging & Prod)
-![Railway Dashboard](./screenshots/railway-dashboard.png)
+Reusable Workflows: Centralized logic for maintainability.
 
----
+Self-Hosted Runners: Used for deploying to the Dev environment (CentOS).
 
-## 💻 How to Run Locally
+🔹 Security Tools
+GitLeaks: Scans code for hardcoded secrets/passwords.
 
-If you want to run this project without the pipeline:
+Trivy: Scans Docker images for CVEs (Common Vulnerabilities).
 
-1.  **Clone the repository:**
-    ```bash
-    git clone [https://github.com/abdosaad203/devops-mid-project.git](https://github.com/abdosaad203/devops-mid-project.git)
-    cd devops-mid-project
-    ```
+CodeQL: Static Application Security Testing (SAST).
 
-2.  **Start with Docker Compose:**
-    ```bash
-    docker compose up -d --build
-    ```
+⚙️ Key Features Implemented
+1. Multi-Environment Deployment Strategy
+Dev: Deployed using Ansible on a local runner to simulate an on-premise data center. It installs Docker, authenticates with GHCR, and runs containers via Compose.
 
-3.  **Access the App:**
-    * Frontend: `http://localhost:8081`
-    * Backend: `http://localhost:8080/swagger`
+Staging: Automatically deployed to Railway for immediate feedback.
 
----
+Production: Deployed to Railway but gated behind a "Required Reviewer" rule to prevent accidental breaking changes.
 
-## 👤 Author
+2. Intelligent Variable Injection
+The pipeline dynamically injects environment variables (Database URLs, API Endpoints) at runtime.
 
-**Abdo Saad**
-* DevOps Engineer
-* GitHub: [abdosaad203](https://github.com/abdosaad203)
+Example: The Frontend connects to the Staging API in Staging, and the Production API in Production automatically.
 
----
-*Built with ❤️ and a lot of YAML.*
+3. "Fix & Secure" Approach
+Dockerfile Optimization: Fixed pathing issues for .NET build artifacts.
+
+Secret Management: All sensitive data (Tokens, Passwords) are stored in GitHub Secrets, never in the code.
+
+Railway CLI Integration: Automated the CLI authentication and deployment commands within the pipeline.
+
+💻 How to Run Locally
+If you wish to run the project on your local machine without the pipeline:
+
+Clone the Repository:
+
+Bash
+
+git clone [https://github.com/abdosaad203/devops-mid-project.git](https://github.com/abdosaad203/devops-mid-project.git)
+cd devops-mid-project
+Run with Docker Compose:
+
+Bash
+
+docker compose up -d --build
+Access the Application:
+
+Frontend: http://localhost:8081
+
+Backend Swagger: http://localhost:8080/swagger
+
+👤 Author
+Abdo Saad
+
+Role: DevOps Engineer
+
+GitHub: abdosaad203
+
+Built with ❤️, YAML, and Docker.
