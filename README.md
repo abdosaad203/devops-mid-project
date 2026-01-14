@@ -1,1 +1,1 @@
-# devops-mid-project
+[![CI/CD Pipeline](https://github.com/abdosaad203/devops-mid-project/actions/workflows/pipeline.yml/badge.svg?branch=main)](https://github.com/abdosaad203/devops-mid-project/actions/workflows/pipeline.yml)
