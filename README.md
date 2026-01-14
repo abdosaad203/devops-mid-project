@@ -34,26 +34,31 @@ graph TD;
     GHCR_Registry-->|Deploy| Staging_Env[Staging: Railway];
     GHCR_Registry-->|Wait for Approval| Prod_Gate{Manual Approval};
     Prod_Gate-->|Approved| Prod_Env[Production: Railway];
+```
     📸 Project Showcase (Verification)
 1. 🛡️ Security & Governance: Production Approval Gate
 To ensure stability, the Production environment is protected. The pipeline pauses and waits for manual admin approval before deploying.
 
-Proof of Protection Rules: (Drag & drop image 1-approval-gate.png here)
+Proof of Protection Rules: <img width="1251" height="408" alt="1-approval-gate" src="https://github.com/user-attachments/assets/c9920b86-c577-4c89-9072-d030587d8363" />
+
 
 2. ✅ CI/CD Pipeline Success
 A fully green pipeline indicating successful Build, Test, Security Scans, and Deployments to all environments.
 
-Full Pipeline Execution: (Drag & drop image 2-pipeline-success.png here)
+Full Pipeline Execution: <img width="1258" height="411" alt="2-pipeline-success" src="https://github.com/user-attachments/assets/8d18b448-cced-41e6-868e-23e48e5823dc" />
+
 
 3. 🚀 Live Production Application
 The application running live on the Production domain, connected to the database, serving real traffic.
 
-Frontend & Backend Connectivity: (Drag & drop image 3-production-live.png here)
+Frontend & Backend Connectivity: <img width="1280" height="767" alt="3-production-live" src="https://github.com/user-attachments/assets/d34dd5cc-d73f-485f-9193-6eb20f5360b9" />
+
 
 4. 🚆 Infrastructure Dashboard
 Railway dashboard showing the healthy status of the 3-tier architecture (Frontend, Backend, Database) in the Production environment.
 
-Service Status: (Drag & drop image 4-railway-dashboard.png here)
+Service Status: <img width="1280" height="701" alt="4-railway-dashboard" src="https://github.com/user-attachments/assets/c21be76c-05e4-4362-872d-a1fac1a78ac4" />
+
 
 🛠️ Technologies & Tools
 🔹 Application Stack
@@ -113,7 +118,7 @@ Clone the Repository:
 
 Bash
 
-git clone [https://github.com/abdosaad203/devops-mid-project.git](https://github.com/abdosaad203/devops-mid-project.git)
+git clone https://github.com/abdosaad203/devops-mid-project.git
 cd devops-mid-project
 Run with Docker Compose:
 
