@@ -35,29 +35,41 @@ graph TD;
     GHCR_Registry-->|Wait for Approval| Prod_Gate{Manual Approval};
     Prod_Gate-->|Approved| Prod_Env[Production: Railway];
 ```
-    📸 Project Showcase (Verification)
-1. 🛡️ Security & Governance: Production Approval Gate
+## 📸 Project Showcase (Verification)
+
+### 1. 🛡️ Security & Governance: Production Approval Gate
 To ensure stability, the Production environment is protected. The pipeline pauses and waits for manual admin approval before deploying.
 
-Proof of Protection Rules: <img width="1251" height="408" alt="1-approval-gate" src="https://github.com/user-attachments/assets/c9920b86-c577-4c89-9072-d030587d8363" />
+> **Proof of Protection Rules:**
+<img width="1251" height="408" alt="1-approval-gate" src="https://github.com/user-attachments/assets/22bf6697-8d6a-444d-bd2b-825c7464cbb1" />
 
 
-2. ✅ CI/CD Pipeline Success
+---
+
+### 2. ✅ CI/CD Pipeline Success
 A fully green pipeline indicating successful Build, Test, Security Scans, and Deployments to all environments.
 
-Full Pipeline Execution: <img width="1258" height="411" alt="2-pipeline-success" src="https://github.com/user-attachments/assets/8d18b448-cced-41e6-868e-23e48e5823dc" />
+> **Full Pipeline Execution:**
+<img width="1258" height="411" alt="2-pipeline-success" src="https://github.com/user-attachments/assets/87ce83e3-90c6-4b64-9ac6-58b495406beb" />
 
 
-3. 🚀 Live Production Application
+---
+
+### 3. 🚀 Live Production Application
 The application running live on the Production domain, connected to the database, serving real traffic.
 
-Frontend & Backend Connectivity: <img width="1280" height="767" alt="3-production-live" src="https://github.com/user-attachments/assets/d34dd5cc-d73f-485f-9193-6eb20f5360b9" />
+> **Frontend & Backend Connectivity:**
+<img width="1280" height="767" alt="3-production-live" src="https://github.com/user-attachments/assets/17aa527f-a66a-42a3-a522-7e5141a2650a" />
 
 
-4. 🚆 Infrastructure Dashboard
+---
+
+### 4. 🚆 Infrastructure Dashboard
 Railway dashboard showing the healthy status of the 3-tier architecture (Frontend, Backend, Database) in the Production environment.
 
-Service Status: <img width="1280" height="701" alt="4-railway-dashboard" src="https://github.com/user-attachments/assets/c21be76c-05e4-4362-872d-a1fac1a78ac4" />
+> **Service Status:**
+<img width="1280" height="701" alt="4-railway-dashboard" src="https://github.com/user-attachments/assets/72949144-81e8-4b5a-aab3-83ab58b5b8b1" />
+
 
 ---
 
@@ -110,8 +122,7 @@ If you wish to run the project on your local machine without the pipeline:
 
 1.  **Clone the Repository:**
     ```bash
-    git clone [https://github.com/abdosaad203/devops-mid-project.git](https://github.com/abdosaad203/devops-mid-project.git)
-    cd devops-mid-project
+    git clone https://github.com/abdosaad203/devops-mid-project.git
     ```
 
 2.  **Run with Docker Compose:**
